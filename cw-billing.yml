@@ -1,0 +1,32 @@
+#WSTemplateFormatVersion: '2010-09-09'
+Description: 'Set Billing Alarm for 10 dollars'
+Resources:
+  SnsTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      Subscription:
+        - Endpoint: email@email.com
+          Protocol: email
+      TopicName: alarm-action
+  CloudWatchAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmName: billing_alarm
+      AlarmDescription: >-
+        A CloudWatch Alarm that triggers the AWS bill reaches the specified
+        threshold (default: 10 USD).
+      MetricName: EstimatedCharges
+      Namespace: AWS/Billing
+      Statistic: Maximum
+      Period: '21600'
+      EvaluationPeriods: '1'
+      Threshold: '10'
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - Ref: SnsTopic
+      Dimensions:
+        - Name: Currency
+          Value: USD
+Parameters: {}
+Metadata: {}
+Conditions: {}
