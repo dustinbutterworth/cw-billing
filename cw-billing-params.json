@@ -1,0 +1,51 @@
+[
+    {
+      "ParameterKey": "SubscriptionEmail",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "TopicName",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "AlarmName",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "MetricName",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "Namespace",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "Statistic",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "Period",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "EvaluationPeriods",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "Threshold",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "ComparisonOperator",
+      "ParameterValue": "CHANGE-ME"
+    },
+    {
+      "ParameterKey": "AliasName",
+      "ParameterValue": "alias/CHANGE-ME"
+    },
+    {
+      "ParameterKey": "KmsMasterKeyId",
+      "ParameterValue": "CHANGE-ME"
+    }
+  ]
+  

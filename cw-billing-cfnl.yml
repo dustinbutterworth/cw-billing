@@ -1,0 +1,15 @@
+stackname: cw-billing-stack
+profilename: homelab
+region: us-east-1
+templateurl:
+templatelocal: cw-billing.yml
+parametersfilepath: cw-billing-params.json
+capabilityiam: false
+capabilitynamediam: false
+deletecreatefailures: true
+uses3template: false
+nolog: false
+logfile: cfnl.log
+verbose: true
+waittime: 5
+maxwaits: 180

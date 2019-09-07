@@ -1,32 +1,127 @@
 #WSTemplateFormatVersion: '2010-09-09'
 Description: 'Set Billing Alarm for 10 dollars'
+Parameters:
+
+  SubscriptionEmail:
+    Type: String
+
+  TopicName:
+    Type: String
+    Default: alarm-action
+  
+  AlarmName:
+    Type: String
+    Default: billing_alarm
+    
+  MetricName:
+    Type: String
+    Default: EstimatedCharges
+    
+  Namespace:
+    Type: String
+    Default: AWS/Billing
+    
+  Statistic:
+    Type: String
+    Default: Maximum
+    AllowedValues:
+      - Average
+      - Maximum
+      - Minimum
+      - SampleCount
+      - Sum
+
+  Period:
+    Type: String
+    Default: 21600
+  
+  EvaluationPeriods:
+    Type: String
+    Default: 1
+  
+  Threshold:
+    Type: String
+    Default: 10
+  
+  ComparisonOperator:
+    Type: String
+    Default: GreaterThanOrEqualToThreshold
+    AllowedValues:
+      - GreaterThanOrEqualToThreshold
+      - GreaterThanThreshold
+      - LessThanOrEqualToThreshold
+      - LessThanThreshold
+      
+  AliasName:
+    Type: String
+
+  KmsMasterKeyId:
+    Type: String
+
 Resources:
+  KMSKey:
+    Type: 'AWS::KMS::Key'
+    Properties:
+      EnableKeyRotation: true
+      Description: Key for s3 logging
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS:
+                'Fn::Join':
+                  - ''
+                  - - 'arn:aws:iam::'
+                    - Ref: 'AWS::AccountId'
+                    - ':root'
+            Action: 'kms:*'
+            Resource: '*'
+          - Sid: "Allow sns use of the key"
+            Effect: "Allow"
+            Principal: 
+              Service: "sns.amazonaws.com"
+            Action: 
+              - "kms:Decrypt"
+              - "kms:GenerateDataKey*"
+            Resource: "*"
+
+  KMSKeyAlias:
+    Type: 'AWS::KMS::Alias'
+    Properties:
+      AliasName: !Ref AliasName
+      TargetKeyId:
+        Ref: KMSKey
+
   SnsTopic:
     Type: 'AWS::SNS::Topic'
+    DependsOn:
+      - KMSKey
     Properties:
       Subscription:
-        - Endpoint: email@email.com
+        - Endpoint: !Ref SubscriptionEmail
           Protocol: email
-      TopicName: alarm-action
+      TopicName: !Ref TopicName
+      KmsMasterKeyId: !Ref KmsMasterKeyId
+
   CloudWatchAlarm:
     Type: 'AWS::CloudWatch::Alarm'
     Properties:
-      AlarmName: billing_alarm
+      AlarmName: !Ref AlarmName
       AlarmDescription: >-
         A CloudWatch Alarm that triggers the AWS bill reaches the specified
         threshold (default: 10 USD).
-      MetricName: EstimatedCharges
-      Namespace: AWS/Billing
-      Statistic: Maximum
-      Period: '21600'
-      EvaluationPeriods: '1'
-      Threshold: '10'
-      ComparisonOperator: GreaterThanOrEqualToThreshold
+      MetricName: !Ref MetricName
+      Namespace: !Ref Namespace
+      Statistic: !Ref Statistic
+      Period: !Ref Period
+      EvaluationPeriods: !Ref EvaluationPeriods
+      Threshold: !Ref Threshold
+      ComparisonOperator: !Ref ComparisonOperator
       AlarmActions:
         - Ref: SnsTopic
       Dimensions:
         - Name: Currency
           Value: USD
-Parameters: {}
-Metadata: {}
-Conditions: {}
+
